@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+case "\$1" in
+    remove)
+        # stop uwsgi processes
+        supervisorctl stop insidethehome_uwsgi
+
+        # clean up runtime files
+        rm -f /var/run/insidethehome/*
+
+        # clean up bytecode files and postinst eggs so the tree can be removed cleanly
+        find /usr/lib/insidethehome/venv -name '*.pyc' -print0 | xargs -0 rm -f
+        find /usr/lib/insidethehome/venv -name '*.egg' -print0 | xargs -0 rm -rf
+        ;;
+esac

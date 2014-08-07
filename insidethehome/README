@@ -1,0 +1,90 @@
+Python Flask-based web application
+
+.
+|-- build.gradle
+|
+|   Gradle setup to build a Debian/Ubuntu package ("gradle deb").
+|
+`-- insidethehome
+    |-- README
+    |
+    |   This file.
+    |
+    |-- conf
+    |   |
+    |   |   Configuration files to be installed under /etc
+    |   |
+    |   |-- nginx
+    |   |   `-- insidethehome
+    |   |
+    |   |       Installs under /etc/nginx/sites-available/
+    |   |       Configure nginx to pass / to uwsgi.
+    |   |
+    |   |-- supervisor
+    |   |   `-- insidethehome.conf
+    |   |
+    |   |       Installs under /etc/supervisor/conf.d/
+    |   |       Configure supervisor to manage uwsgi processes.
+    |   |
+    |   |-- uwsgi
+    |   |   `-- uwsgi.ini
+    |   |
+    |   |       Installs under /etc/insidethehome/
+    |   |       Configure uwsgi to run this application.
+    |   |
+    |   `-- insidethehome
+    |       `-- insidethehome.conf
+    |
+    |           Installs under /etc/insidethehome/
+    |           The supplied uwsgi.ini points at this
+    |           example configuration file via
+    |           "INSIDETHEHOME_SETTINGS".
+    |
+    |-- doc
+    |   `-- README
+    |
+    |       Installs under /usr/share/doc/insidethehome/
+    |       Post-installation information.
+    |
+    |-- dpkg
+    |   |
+    |   |   Package control files.
+    |   |
+    |   `-- debian
+    |       |-- copyright
+    |       |-- insidethehome.postinst
+    |       `-- insidethehome.prerm
+    |-- setup.py
+    |
+    |   Setuptools configuration for the distribution.
+    |
+    `-- insidethehome
+        |-- __init__.py
+        |-- defaults.py
+        |
+        |   Defaults loaded by app.config.from_object
+        |
+        |-- app.py
+        |-- configure.py
+        |-- controllers.py
+        |
+        |   Define a simple "Hello World" application.
+        |   Running this as the top-level script starts Flask's
+        |   built-in server, for use during development.
+        |
+        |-- development.py
+        |
+        |   Define a development server entry point for the
+        |   application.
+        |
+        |-- production.py
+        |
+        |   Define a production (WSGI) entry point for the
+        |   application.
+        |
+        |
+        `-- tests
+            |-- __init__.py
+            `-- test_app.py
+
+                Simple unit test demonstrating app.test_client.

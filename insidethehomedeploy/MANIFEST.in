@@ -1,0 +1,3 @@
+recursive-include insidethehomedeploy/templates *
+recursive-include insidethehomedeploy/data *
+include insidethehomedeploy/versions.json

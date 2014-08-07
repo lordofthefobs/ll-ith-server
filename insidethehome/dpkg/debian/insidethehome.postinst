@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+case "\$1" in
+    configure)
+        # set runtime directories' ownership to match user= in supervisor configuration
+        chown nobody /var/log/insidethehome
+
+        # load configuration of uwsgi and start
+        supervisorctl reload
+        ;;
+esac

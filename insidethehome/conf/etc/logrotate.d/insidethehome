@@ -1,0 +1,11 @@
+"/var/log/insidethehome/*.log" {
+    daily
+    missingok
+    rotate 7
+    compress
+    delaycompress
+    notifempty
+    postrotate
+        touch /var/run/insidethehome/uwsgi_logreopen
+    endscript
+}

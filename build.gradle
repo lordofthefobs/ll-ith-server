@@ -1,0 +1,83 @@
+buildscript {
+   repositories {
+       maven {
+         url 'http://artifactory.engr.wavemarket.com/releases'
+       }
+   }
+
+   dependencies {
+      classpath(group: 'com.locationlabs', name: 'gradle_ubuntu_packager', version: '+')
+   }
+}
+
+def lines = new File("insidethehome/setup.py").readLines()
+def pattern = ~/^__version__\s*=\s*['"]([^\s]+)["']/
+def version = lines*.find(pattern, {match, version -> return version}).find()
+
+if (!version) {
+    throw new ResourceException("Unable to parse __version__ from insidethehome/setup.py")
+}
+
+project.version = version
+project.description = "Inside The Home"
+
+project.ext.dists = ["insidethehome", "insidethehomedeploy"]
+
+apply from: "${System.getenv().GRADLE_COMMON}/plugins/python/python.gradle"
+
+virtualEnv.makeRelocatable()
+
+apply plugin: 'ubuntu'
+
+ubuntu {
+   name         = "insidethehome"
+   author       = "Location Labs"
+   debDir       = "insidethehome/dpkg"
+   email        = "info@locationlabs.com"
+   homepage     = "http://locationlabs.com"
+   releaseNotes = "Initial version of the insidethehome project."
+   depends {
+      on "nginx"
+      // depend on the specific python version because
+      // paths inside the virtualenv include the version number;
+      // a different version of python will not look in those directories
+      on "python" + getPythonVersion()
+      on "python-setuptools"
+      on "supervisor"
+      on "build-essential"
+   }
+}
+
+deb {
+   dependsOn createDist
+
+   doFirst {
+      ubuntu {
+         // insidethehome virtualenv
+         addFilesToDeb(virtualEnv_insidethehome.virtual_env.listFiles(),
+                       "/usr/lib/insidethehome/venv")
+
+         // insidethehome's own configuration
+         addFileToDeb(new File("insidethehome/conf/etc/insidethehome/insidethehome.conf"),
+                      "/etc/insidethehome")
+
+         // service configurations
+         addFileToDeb(new File("insidethehome/conf/etc/nginx/sites-available/insidethehome"),
+                      "/etc/nginx/sites-available")
+         addFileToDeb(new File("insidethehome/conf/etc/insidethehome/uwsgi.ini"),
+                      "/etc/insidethehome")
+         addFileToDeb(new File("insidethehome/conf/etc/supervisor/conf.d/insidethehome.conf"),
+                      "/etc/supervisor/conf.d")
+         addFileToDeb(new File("insidethehome/conf/etc/logrotate.d/insidethehome"),
+                      "/etc/logrotate.d")
+
+         // documentation
+         addFileToDeb(new File("insidethehome/doc/README"),
+                      "/usr/share/doc/insidethehome")
+      }
+
+      dirs {
+         dir "/var/log/insidethehome"
+      }
+   }
+}

@@ -1,0 +1,3 @@
+"""
+insidethehome component configuration defaults.
+"""

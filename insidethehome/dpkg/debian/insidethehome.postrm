@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+case "\$1" in
+    purge)
+        # clean up files installed by pip
+        rm -rf /usr/lib/insidethehome/venv/lib/python2.7/site-packages/
+        rm -rf /usr/lib/insidethehome/venv/bin
+
+        # clean up log directory
+        rm -f /var/log/insidethehome/*
+esac

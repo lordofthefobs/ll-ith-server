@@ -1,0 +1,52 @@
+# insidethehome
+
+The insidethehome runs within uwsgi (via supervisor) and can be served
+from any WSGI-compatible web server, e.g. nginx or apache2.
+
+
+## nginx (standalone)
+
+The insidethehome ships with a suitable nginx configuration for  
+deployment by itself, within the /etc/nginx/sites-available directory. 
+By default, this configuration is *NOT* enabled, but you can easily 
+enable it by:
+
+ 1. Link insidethehome into sites-enabled:
+
+    $ ln -s ../sites-available/insidethehome /etc/nginx/sites-enabled/
+
+ 2. Disable the default nginx configuration (if any):
+
+    $ rm -f /etc/nginx/sites-enabled/default
+
+ 3. Reload the nginx configuration:
+
+    $ service nginx restart
+
+
+Again, for easy copy-pasting:
+
+    ln -s ../sites-available/insidethehome /etc/nginx/sites-enabled/
+    rm -f /etc/nginx/sites-enabled/default
+    service nginx restart
+
+
+Note that because the package install does not enable this configuration,
+package removal *WILL NOT* remove this configuration. Fortunately,
+reverting the above steps is as easy as:
+
+    ln -s ../sites-available/default /etc/nginx/sites-enabled/
+    rm -f /etc/nginx/sites-enabled/insidethehome
+    service nginx restart
+
+
+# nginx (multiple applications)
+
+The default nginx configuration defines a complete server and 
+routes "/" to the insidethehome application. 
+
+If you want to host multiple applications from the same nginx 
+server, you will need to define a customized configuration 
+that defines routes for all applications, probably with a 
+rewrite rule so that each application believes it is managing
+the root path.

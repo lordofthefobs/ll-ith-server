@@ -1,0 +1,15 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "ubuntu12.04"
+    config.vm.box_url = "https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_provisionerless.box"
+
+    config.vm.define "insidethehome-vagrant" do |c|
+       c.vm.hostname = "insidethehome-vagrant"
+       c.vm.network "forwarded_port", guest: 80, host: 5080
+       c.vm.provision "shell", inline: "apt-get -qy update"
+    end
+
+    config.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+end
