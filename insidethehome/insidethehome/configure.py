@@ -13,6 +13,8 @@ from flask import request
 from insidethehome import defaults
 from insidethehome.controllers import create_routes
 
+from insidethehome.model.devices import DeviceManager
+
 
 def configure_app(app, debug=False, testing=False):
     """
@@ -34,6 +36,8 @@ def configure_app(app, debug=False, testing=False):
     _configure_from_environment(app)
     _configure_stream_reading(app)
     _configure_logging(app)
+
+    _configure_model(app)
 
     # Configure other collaborators (or mocks) here
 
@@ -87,3 +91,6 @@ def _configure_logging(app):
             app.logger.addHandler(handler)
 
         app.logger.debug("Initialized logging")
+
+def _configure_model(app):
+    app.device_manager = DeviceManager(app)

@@ -18,6 +18,7 @@ setup(name='insidethehome',
       ],
       install_requires=[
           'Flask>=0.8',
+          'Flask-Cors>=1.6.1'
           'timber>=1.5',
           'uWSGI>=1.9.20',
       ],
