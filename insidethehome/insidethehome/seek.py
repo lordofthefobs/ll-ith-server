@@ -1,3 +1,4 @@
+import datetime
 import nmap
 import time
 
@@ -28,3 +29,8 @@ if __name__ == '__main__':
 
         for host in hosts:
             controller.add_hostname(host, host)
+            # device = controller.get_device_by_mac(host)
+            # device = controller.santize(device)
+            # if device:
+
+

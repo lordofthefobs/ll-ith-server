@@ -1,6 +1,7 @@
+import datetime
 import MySQLdb
 
-from sql import update_statement, select_statement
+from sql import get_all_statement, update_statement, select_statement
 
 
 def setup():
@@ -11,6 +12,19 @@ def setup():
 def teardown(con):
     con.commit()
     con.close()
+
+
+def get_all_devices():
+    con = setup()
+    cursor = con.cursor()
+    table = "device"
+    statement = get_all_statement.format(table=table, property="*")
+    cursor.execute(statement)
+    output = cursor.fetchall()
+    device = sanitize(output)
+    cursor.close()
+    teardown(con)
+    return device
 
 
 def get_device_by_name(hostname):
@@ -53,14 +67,19 @@ def add_hostname(hostname, mac):
     table = "device"
     mac_column = "mac"
     hostname_column = "name"
-    insert_statement =\
-        "INSERT INTO {table} ({hostname_column}, {mac_column}) VALUES \
-        ('{hostname}', '{mac_value}');".format(table=table,
-                                               mac_column=mac_column,
-                                               hostname_column=hostname_column,
-                                               mac_value=mac,
-                                               hostname=hostname)
-    cursor.execute(insert_statement)
+    # Check if already exists in db
+    device = get_device_by_mac(mac)
+    if not device:
+        insert_statement =\
+            "INSERT INTO {table} ({hostname_column}, {mac_column}) VALUES \
+            ('{hostname}', '{mac_value}');".format(table=table,
+                                                   mac_column=mac_column,
+                                                   hostname_column=hostname_column,
+                                                   mac_value=mac,
+                                                   hostname=hostname)
+        cursor.execute(insert_statement)
+    else:
+        set_time(mac, datetime.datetime.now())
     cursor.close()
     teardown(con)
 
@@ -95,21 +114,9 @@ def set_history(mac, time):
     con = setup()
     cursor = con.cursor()
     history_table = "history"
-
-    # statement = select_statement.format(table=device_table,
-    #                                     property='id',
-    #                                     column=mac_column,
-    #                                     value=mac)
-    # cursor.execute(statement)
-    # output = cursor.fetchall()
     device = get_device_by_mac(mac)
-    id_ = device[0]
 
-    # statement = select_statement.format(table=device_table,
-    #                                     property='startTime',
-    #                                     column=mac_column,
-    #                                     value=mac)
-    # start_time = cursor.execute(statement)
+    id_ = device[0]
     start_time = device[4]
 
     statement = "INSERT INTO {table} (device_id, startTime, endTime) VALUES \
