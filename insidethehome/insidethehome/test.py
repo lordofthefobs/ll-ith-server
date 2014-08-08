@@ -1,10 +1,12 @@
 import controller
+import datetime
 
 
 def main():
     name = "test"
     mac = "00:00:00:00:00:00"
-    print controller.get_device_by_mac(mac)
+    time = datetime.datetime.now()
+    print controller.set_history(mac, time)
 
 if __name__ == '__main__':
     main()
